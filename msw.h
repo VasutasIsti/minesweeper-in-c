@@ -16,7 +16,7 @@ typedef struct Board{
 } Board;
 
 Cell Init_Cell(bool bomb, bool flaged, bool visited, int neighbours);
-void Init_Board(int x, int y, double diff, Board *board);
+Board Init_Board(int x, int y, double diff, Board *board);
 void PlaceBombs(Board *board);
 int CountNeighbours(Board *board, int x, int y);
 void SetNeigbourCount(Board *board, int x, int y, int neighbourCount);

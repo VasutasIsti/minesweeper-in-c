@@ -1,19 +1,35 @@
 #include <msw.h>
+#include <stdint.h>
 
 Cell Init_Cell(bool bomb, bool flaged, bool visited, int neighbours){
     Cell cell = {bomb, flaged, visited, neighbours};
     return cell;
 }
 
-void Init_Board(int x, int y, double diff, Board *board) {
-    board->sizeX = x;
-    board->sizeY = y;
-    board->difficulty = diff;
-    board->cells[board->sizeX][board->sizeY];
+Board Init_Board(int x, int y, double diff){
+    Board board;
+    board.sizeX = x;
+    board.sizeY = y;
+    board.difficulty = diff;
+    board.cells = (Cell **)malloc(x * sizeof(Cell *));
+    for (int i = 0; i < x; i++)
+        board.cells[i] = (Cell *)malloc(y * sizeof(Cell));
+    for (int i = 0; i < x; i++)
+        for (int j = 0; j < y; j++)
+            board.cells[i][j] = Init_Cell(false, false, false, 0);
+    return board;
 }
 
 void PlaceBombs(Board *board){
-    
+    int allBombs = (int)(board->sizeX * board->sizeY * board->difficulty);
+    while (allBombs > 0){
+        int x = rand() % board->sizeX;
+        int y = rand() % board->sizeY;
+        if (!board->cells[x][y].isBomb){
+            board->cells[x][y].isBomb = true;
+            allBombs--;
+        }
+    }
 }
 
 int CountNeighbours(Board *board, int x, int y){
