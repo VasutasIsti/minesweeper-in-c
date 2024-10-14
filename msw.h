@@ -15,7 +15,7 @@ typedef struct Board{
     double difficulty;    // 0-1 kozott, bombak aranya
 } Board;
 
-void Init_Cell(bool bomb, bool flaged, bool visited, int neighbours);
+Cell Init_Cell(bool bomb, bool flaged, bool visited, int neighbours);
 void Init_Board(int x, int y, double diff, Board *board);
 void PlaceBombs(Board *board);
 int CountNeighbours(Board *board, int x, int y);
