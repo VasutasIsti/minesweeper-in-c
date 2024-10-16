@@ -1,5 +1,7 @@
-#include <msw.h>
+#include "msw.h"
 #include <stdint.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 Cell Init_Cell(bool bomb, bool flaged, bool visited, int neighbours){
     Cell cell = {bomb, flaged, visited, neighbours};
@@ -44,6 +46,24 @@ int CountNeighbours(Board *board, int x, int y){
     return result;
 }
 
-void SetNeighbourCount(Board *board, int x, int y, int neighbourCount){
-    board->cells[x][y].neighbours = neighbourCount;
+void SetNeighbourCount(Cell *cell, int neighbourCount){
+    cell->neighbours = neighbourCount;
+}
+
+double BombCountToDifficulty(int x, int y, int bombCount){
+    return (x*y)/(double)bombCount;
+}
+
+void VisitAllEmpty(Board *board){
+    bool **visitedCells = (bool **)malloc(board->sizeX * sizeof(bool *));
+    for (int i = 0; i < board->sizeX; i++)
+        visitedCells[i] = (bool *)malloc(board->sizeY * sizeof(bool));
+    for (int i = 0; i < board->sizeX; i++)
+        for (int j = 0; j < board->sizeY; j++)
+            visitedCells[i][j] = false;
+    
+}
+
+void IsVisited(bool **visitedCells, Board *board){
+    
 }

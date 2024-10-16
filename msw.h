@@ -12,12 +12,13 @@ typedef struct Board{
     Cell **cells;     // Ez lesz maga a tabla
     int sizeX;
     int sizeY;
-    double difficulty;    // 0-1 kozott, bombak aranya
+    double difficulty;    // 0.0-1.0 kozott, bombak aranya
 } Board;
 
 Cell Init_Cell(bool bomb, bool flaged, bool visited, int neighbours);
-Board Init_Board(int x, int y, double diff, Board *board);
+Board Init_Board(int x, int y, double diff);
 void PlaceBombs(Board *board);
 int CountNeighbours(Board *board, int x, int y);
-void SetNeigbourCount(Board *board, int x, int y, int neighbourCount);
-
+void SetNeigbourCount(Cell *cell, int neighbourCount);
+double BombCountToDifficulty(int x, int y, int bombCount);
+void VisitAllEmpty(Board *board);
