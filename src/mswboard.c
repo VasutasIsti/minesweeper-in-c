@@ -1,14 +1,5 @@
-#include "msw.h"
-#include <stdint.h>
-#include <stdbool.h>
+#include "mswboard.h"
 #include <stdlib.h>
-
-#pragma region Board related functions
-
-Cell Init_Cell(){
-    Cell cell = {false, false, false, 0};
-    return cell;
-}
 
 Board Init_Board(int x, int y, double diff){
     Board board;
@@ -24,12 +15,6 @@ Board Init_Board(int x, int y, double diff){
     return board;
 }
 
-MinesweeperGame Init_Game(int x, int y, double diff){
-    MinesweeperGame game;
-    game.board = Init_Board(x, y, diff);
-    game.flagsRemaining = DifficultyToBombCount(&game.board);
-}
-
 void Destruct_Board(Board *board){
     for (int i = 0; i < board->sizeX; i++)
         free(board->cells[i]);
@@ -37,9 +22,6 @@ void Destruct_Board(Board *board){
     // Self Note: board is not dynamically allocated, so
     // there's no need to free it up. Nearly tried it. 
 }
-
-#pragma endregion
-#pragma region Helper functions
 
 bool IsOnBoard(Board *board, int x, int y){
     return (x >= 0 &&
@@ -52,8 +34,8 @@ double BombCountToDifficulty(int x, int y, int bombCount){
     return (x*y)/(double)bombCount;
 }
 
-int DifficultyToBombCount(Board *board){
-    return board->sizeX * board->sizeY * board->difficulty;
+int DifficultyToBombCount(int x, int y, double diff){
+    return (int)(x * y * diff);
 }
 
 int NeighbourCount(Board *board, int x, int y){
@@ -77,11 +59,18 @@ bool IsEmptyListed(int **empties, int n, int x, int y){
     return isInList;
 }
 
-#pragma endregion
-#pragma region Readability enhancers
-
+int NeighbouringFlags(Board *board, int x, int y){
+    int flags = 0;
+    for (int i = x-1; i <= x+1; i++)
+        for (int j = y-1; j <= y+1; j++)
+            if (!IsOnBoard(board, x, y) || (i == x && j == y))
+                continue;
+            else
+                flags++;
+    return flags;
+}
 void PlaceBombs(Board *board){
-    int allBombs = DifficultyToBombCount(board);
+    int allBombs = DifficultyToBombCount(board->sizeX, board->sizeY, board->difficulty);
     while (allBombs > 0){
         int x = rand() % board->sizeX;
         int y = rand() % board->sizeY;
@@ -103,12 +92,12 @@ void SetNeighbourCounts(Board *board){
 void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
     empties[*n][0] = x;
     empties[*n][1] = y;
-    *n++;
+    *n += 1;        // -Wall is killing me here
     for (int i = x-1; i <= x+1; i++)
         for (int j = y-1; j <= y+1; j++)
             if ((i == x && j == y) ||
                 board->cells[i][j].neighbours != 0 ||
-                IsEmptyListed(empties, n, x, y))
+                IsEmptyListed(empties, *n, x, y))
                     continue;
             else if (!board->cells[i][j].isVisited)
                 // It's just an optimization, if my math is mathing
@@ -125,64 +114,3 @@ void FindAdjacentEmpties(Board *board, int x, int y){
         board->cells[empties[i][0]][empties[i][1]].isVisited = true;
     free(empties);
 }
-
-#pragma endregion
-#pragma region Actions
-
-enum VisitOutcome VisitCell(Cell *cell, int x, int y){
-    if (cell->isVisited) return VISITED;
-    cell->isVisited = true;
-    if (cell->neighbours > 0) return NUMBER;
-    if (cell->isBomb) return LOST;
-    return EMPTY;
-}
-
-void FlagCell(MinesweeperGame *game, int x, int y){
-    // Maybe this was not a good idea...
-    game->board.cells[x][y].isFlaged = !game->board.cells[x][y].isFlaged;
-    if (game->board.cells[x][y].isFlaged)
-        game->flagsRemaining--;
-    else
-        game->flagsRemaining++;
-}
-
-#pragma endregion
-#pragma region Game Logic
-
-void SetupGame(Board *board){
-    // The board is already initialized
-    PlaceBombs(board);
-    SetNeighbourCounts(board);
-}
-
-void Next(MinesweeperGame *game, int x, int y){
-    switch (VisitCell(&game->board, x, y)){
-        case NUMBER:
-            /*  The cell is visited by VisitCell(),
-                There's no more task to do
-            */
-            break;
-        case EMPTY:
-            FindAdjacentEmpties(&game->board, x, y);
-            break;
-        case VISITED:
-            /*  TODO: Check if there's as many flaged neighbours
-                as the neighbourcount. After that, is there any
-                neighbouring bomb cell, that is not flagged.
-            */
-            // FindAdjacentEmpties(board, x, y);
-            break;
-        case LOST:
-            /*  A big TODO:
-                At the time of writing, the Lost and Won conditions
-                will be ui dependent. The data, such as isVisited will
-                remain the same.
-            */
-            break;
-        case WON:
-            // A big TODO: Same as LOST
-            break;
-    }
-}
-
-#pragma endregion

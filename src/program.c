@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include "msw.h"
-#include "../debugmalloc.h"
+#include "mswgame.h"
+#include "../../debugmalloc.h"
 
 
 int main(){
