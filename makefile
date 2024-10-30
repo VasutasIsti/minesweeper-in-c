@@ -8,7 +8,15 @@ INC_DIR = include
 SRC_FILES = $(wildcard $(SRC_DIR)/*.c)
 OBJ_FILES = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRC_FILES))
 
-TARGET = minesweeper.exe
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+	TARGET := minesweeper
+	CFLAGS += -D_LINUX
+else
+	CC := x86_64-w64-mingw32-gcc
+	TARGET = minesweeper.exe
+	CFLAGS += -D_WINDOWS
 
 all: $(TARGET)
 
