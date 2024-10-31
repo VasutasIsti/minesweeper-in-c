@@ -17,6 +17,7 @@ else
 	CC := x86_64-w64-mingw32-gcc
 	TARGET = minesweeper.exe
 	CFLAGS += -D_WINDOWS
+endif
 
 all: $(TARGET)
 
