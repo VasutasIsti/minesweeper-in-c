@@ -1,3 +1,4 @@
+# README
 This project was created for a university homework in programing. It will be minesweeper, hopefully with cross-platform capabilities thanks to libraries provided by the task.
 My goal with this project is to make such structure, that is easy to expand, e.g. the game logic is separate from rendering, so it can be just a console application (with econio), or it can be a graphical application (with sdl)(it's not in the current specification as criteria, so it will come later).
 ## Important
