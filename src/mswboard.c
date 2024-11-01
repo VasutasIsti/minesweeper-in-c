@@ -51,6 +51,8 @@ int NeighbourCount(Board *board, int x, int y){
     return result;
 }
 
+// In the n long empties list of int[2]s (x and y coordinates), returns if position
+// is in the empties list. 
 bool IsEmptyListed(int **empties, int n, int x, int y){
     bool isInList = false;
     for (int i = 0; i < n; i++)
@@ -92,17 +94,20 @@ void SetNeighbourCounts(Board *board){
 void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
     empties[*n][0] = x;
     empties[*n][1] = y;
-    *n += 1;        // -Wall is killing me here
-    for (int i = x-1; i <= x+1; i++)
-        for (int j = y-1; j <= y+1; j++)
-            if ((i == x && j == y) ||
-                board->cells[i][j].neighbours != 0 ||
-                IsEmptyListed(empties, *n, x, y))
-                    continue;
-            else if (!board->cells[i][j].isVisited)
-                // It's just an optimization, if my math is mathing
-                // It wont check cells that was visited before.
-                CheckAdjacents(board, i, j, empties, n);
+    *n += 1;        // -Wall is killing me here, like *n++; is killing him...
+    if (board->cells[x][y].neighbours == 0){
+        for (int i = x-1; i <= x+1; i++)
+            for (int j = y-1; j <= y+1; j++)
+                if ((i == x && j == y) ||
+                    (!IsOnBoard(board, i, j)) ||
+                    (board->cells[i][j].neighbours != 0) ||
+                    (IsEmptyListed(empties, *n, x, y)))
+                        continue;
+                else if (!board->cells[i][j].isVisited)
+                    // It's just an optimization, if my math is mathing
+                    // It wont check cells that was visited before.
+                    CheckAdjacents(board, i, j, empties, n);
+    }
 }
 
 void FindAdjacentEmpties(Board *board, int x, int y){

@@ -4,6 +4,7 @@
 typedef struct MinesweeperGame{
     Board board;
     int flagsRemaining;
+    int notvisited; // Count of cells that are not bombs nor visited
     // Time and other features can come here
 } MinesweeperGame;
 
@@ -11,18 +12,20 @@ enum VisitOutcome{
     NUMBER,
     EMPTY,
     VISITED,    // TODO: To implement that mechanic
-    WON,
-    LOST
+    BOMB
 };
 
 MinesweeperGame Init_Game(int x, int y, double diff);
 // Note: Maybe a game destructer is needed if I want to make a
 //       specific behaviour.
 
-enum VisitOutcome VisitCell(Cell *cell);
-void Flagging(MinesweeperGame *game, int x, int y);
-
-// Game Logic
-
 void SetupGame(Board *board);
+void Flagging(MinesweeperGame *game, int x, int y);
+void VisitedSelected(MinesweeperGame *game, int x, int y);
+
+enum VisitOutcome VisitCell(Cell *cell);
 void Next(MinesweeperGame *game, int x, int y);
+
+// Placeholders at the moment
+void Win(MinesweeperGame *game);
+void Lost(MinesweeperGame *game);
