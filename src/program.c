@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include "mswgame.h"
-#include "../../debugmalloc.h"
-
+#include "debugmalloc.h"
 
 int main(){
     int sizeX = 10, sizeY = 10;
