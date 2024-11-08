@@ -11,7 +11,7 @@ typedef struct MinesweeperGame{
 enum VisitOutcome{
     NUMBER,
     EMPTY,
-    VISITED,    // TODO: To implement that mechanic
+    VISITED,
     BOMB
 };
 
