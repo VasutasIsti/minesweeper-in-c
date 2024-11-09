@@ -1,5 +1,6 @@
 minesweeper
-Minesweeper
 minesweeper.exe
 obj
 .vscode
+*.pdf
+*.zip

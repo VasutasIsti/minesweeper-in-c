@@ -52,6 +52,7 @@ void RenderTable(Board *board){
 
     // the upper and lower borders of the board
     char *hl = HorizontalBorder(board);
+    econio_gotoxy(0,0);
     printf("%s\n", hl);
     for (int j = 0; j < board->sizeY; j++){
         printf("|");

@@ -31,14 +31,6 @@ bool IsOnBoard(Board *board, int x, int y){
             y < board->sizeY);
 }
 
-double BombCountToDifficulty(int x, int y, int bombCount){
-    return (x*y)/(double)bombCount;
-}
-
-int DifficultyToBombCount(int x, int y, double diff){
-    return (int)(x * y * diff);
-}
-
 int NeighbourCount(Board *board, int x, int y){
     // Assuming the choosen cell is not a bomb
     int result = 0;
@@ -49,6 +41,14 @@ int NeighbourCount(Board *board, int x, int y){
             else if (board->cells[i][j].isBomb)
                 result++;
     return result;
+}
+
+double BombCountToDifficulty(int x, int y, int bombCount){
+    return (x*y)/(double)bombCount;
+}
+
+int DifficultyToBombCount(int x, int y, double diff){
+    return (int)(x * y * diff);
 }
 
 // In the n long empties list of int[2]s (x and y coordinates), returns if position

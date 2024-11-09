@@ -8,7 +8,10 @@
 // TODO: make rendererWin.h
 #endif
 #ifdef LINUX
-#include "rendererlinux.h"
+    #include "rendererlinux.h"
+#endif
+#ifdef SDL
+// TODO: make rendererSDL.h
 #endif
 
 int main(){
@@ -24,6 +27,7 @@ int main(){
     RenderCursor(&game.board, &cursor);
     #endif
 
+    // Game Loops place
     getchar();
 
     #ifdef LINUX

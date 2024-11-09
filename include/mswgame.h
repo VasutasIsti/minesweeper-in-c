@@ -28,4 +28,4 @@ void Next(MinesweeperGame *game, int x, int y);
 
 // Placeholders at the moment
 void Win(MinesweeperGame *game);
-void Lost(MinesweeperGame *game);
+void Lose(MinesweeperGame *game);

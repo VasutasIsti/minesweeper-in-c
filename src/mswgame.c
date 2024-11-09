@@ -92,7 +92,7 @@ void Next(MinesweeperGame *game, int x, int y){
             VisitedSelected(game, x, y);
             break;
         case BOMB:
-            Lost(game);
+            Lose(game);
             break;
     }
 
@@ -111,7 +111,7 @@ void Win(MinesweeperGame *game){
     Destruct_Board(&game->board);
 }
 
-void Lost(MinesweeperGame *game){
+void Lose(MinesweeperGame *game){
     /*TODO:*/
 
     Destruct_Board(&game->board);
