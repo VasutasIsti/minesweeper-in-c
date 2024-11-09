@@ -5,6 +5,7 @@
 #define LINUX
 
 #ifdef WIN
+// TODO: make rendererWin.h
 #endif
 #ifdef LINUX
 #include "rendererlinux.h"
@@ -16,14 +17,17 @@ int main(){
     MinesweeperGame game = Init_Game(sizeX, sizeY, difficulty);
 
     #ifdef LINUX
-    CreateAS();
+    StartRendering();
     RenderTable(&game.board);
+    Cursor cursor = Init_Cursor();
+    CursorToCenter(&game.board, &cursor);
+    RenderCursor(&game.board, &cursor);
     #endif
 
     getchar();
 
     #ifdef LINUX
-    DestructAS();
+    FinishRendering();
     #endif
 
     Destruct_Board(&game.board);

@@ -1,3 +1,3 @@
 #/bin/bash
-gcc -lm -Wall -Werror -I"include" src/*.c -o Minesweeper 
+gcc -g -lm -Wall -Werror -Iinclude src/*.c -o minesweeper 
 echo Build successful!

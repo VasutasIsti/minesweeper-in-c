@@ -1,5 +1,6 @@
 #include "mswboard.h"
 #include <stdlib.h>
+#include "debugmalloc.h"
 
 Board Init_Board(int x, int y, double diff){
     Board board;
@@ -43,11 +44,10 @@ int NeighbourCount(Board *board, int x, int y){
     int result = 0;
     for (int i = x-1; i <= x+1; i++)
         for (int j = y-1; j <= y+1; j++)
-            if ((i == x && j == y) || !IsOnBoard(board, x, y))
+            if ((i == x && j == y) || !IsOnBoard(board, i, j))
                 continue;
-            else
-                if (board->cells[i][j].isBomb)
-                    result++;
+            else if (board->cells[i][j].isBomb)
+                result++;
     return result;
 }
 
@@ -71,6 +71,7 @@ int NeighbouringFlags(Board *board, int x, int y){
                 flags++;
     return flags;
 }
+
 void PlaceBombs(Board *board){
     int allBombs = DifficultyToBombCount(board->sizeX, board->sizeY, board->difficulty);
     while (allBombs > 0){

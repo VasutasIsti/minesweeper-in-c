@@ -1,5 +1,6 @@
 #include "mswgame.h"
 #include <stdlib.h>
+#include "debugmalloc.h"
 
 MinesweeperGame Init_Game(int x, int y, double diff){
     MinesweeperGame game;
