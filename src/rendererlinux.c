@@ -84,3 +84,11 @@ void RenderCursor(Board *board, Cursor *cursor){
     // put the cursor out of the table
 }
 
+void GameLoop(MinesweeperGame *game, Cursor *cursor){
+    StartRendering();
+    RenderTable(&game->board);
+    CursorToCenter(&game->board, cursor);
+    RenderCursor(&game->board, cursor);
+    
+}
+

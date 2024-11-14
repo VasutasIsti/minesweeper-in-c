@@ -22,3 +22,5 @@ void CursorToCenter(Board *board, Cursor *cursor);
 bool CheckCursorMovement(Board *board, Cursor *cursor, CursorDir dir);
 void RenderTable(Board *board);
 void RenderCursor(Board *board, Cursor *cursor);
+
+void GameLoop(MinesweeperGame *game, Cursor *cursor);
