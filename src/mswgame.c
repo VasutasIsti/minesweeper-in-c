@@ -4,6 +4,7 @@
 
 MinesweeperGame Init_Game(int x, int y, double diff){
     MinesweeperGame game;
+    game.state = INGAME;
     game.board = Init_Board(x, y, diff);
     game.flagsRemaining = DifficultyToBombCount(x, y, diff);
     game.notvisited = (x*y)-game.flagsRemaining;
@@ -21,11 +22,9 @@ void Flagging(MinesweeperGame *game, int x, int y){
     // To not have more flags than bombs
     if (game->flagsRemaining == 0 && !game->board.cells[x][y].isFlaged)
         return;
-    FlagCell(&game->board.cells[x][y]);
-    if (game->board.cells[x][y].isFlaged)
-        game->flagsRemaining--;
-    else
-        game->flagsRemaining++;
+    bool state = FlagCell(&game->board.cells[x][y]);
+    if (state) game->flagsRemaining--;
+    else       game->flagsRemaining++;
 }
 
 void VisitedSelected(MinesweeperGame *game, int x, int y){
@@ -54,7 +53,7 @@ void VisitedSelected(MinesweeperGame *game, int x, int y){
             }
             if (i != x+2){
                 free(localempties);
-                Lost(game);
+                Lose(game);
             }
             else {
                 int **empties = (int **)malloc((game->board.sizeX*game->board.sizeY)*sizeof(int[2]));
@@ -73,6 +72,7 @@ void VisitedSelected(MinesweeperGame *game, int x, int y){
 
 enum VisitOutcome VisitCell(Cell *cell){
     if (cell->isVisited) return VISITED;
+
     cell->isVisited = true;
     if (cell->neighbours > 0) return NUMBER;
     if (cell->isBomb) return BOMB;
@@ -107,12 +107,10 @@ void Next(MinesweeperGame *game, int x, int y){
 
 void Win(MinesweeperGame *game){
     /*TODO:*/
-
-    Destruct_Board(&game->board);
+    game->state = WIN;
 }
 
 void Lose(MinesweeperGame *game){
     /*TODO:*/
-
-    Destruct_Board(&game->board);
+    game->state = LOSE;
 }

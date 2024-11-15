@@ -16,19 +16,12 @@
 
 int main(){
     int sizeX = 10, sizeY = 10;
-    double difficulty = 0.3;
+    double difficulty = 0.2;
     MinesweeperGame game = Init_Game(sizeX, sizeY, difficulty);
     Cursor cursor = Init_Cursor();
 
     #ifdef LINUX
     GameLoop(&game, &cursor);
-    #endif
-
-    // Game Loops place
-    getchar();
-
-    #ifdef LINUX
-    FinishRendering();
     #endif
 
     Destruct_Board(&game.board);

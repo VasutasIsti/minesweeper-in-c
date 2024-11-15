@@ -12,15 +12,40 @@ typedef enum CursorDir{
     UP,
     DOWN,
     LEFT,
-    RIGHT
+    RIGHT,
+    UNSET
 } CursorDir;
+
+typedef struct pos{
+    int x;
+    int y;
+} pos;
+
+typedef struct ScreenPositions{
+    // For storing positions of counters, texts, etc. on the screen
+    pos corner_BR;
+    pos belowTable;
+    
+    pos stats;
+    // The following pos-es are relative to stats
+    pos timeText;
+    pos timer;
+    pos flagsText;
+    pos flagsCounter;
+
+} ScreenPositions;
 
 void StartRendering();
 void FinishRendering();
 Cursor Init_Cursor();
+ScreenPositions SetPositions(MinesweeperGame *game);
 void CursorToCenter(Board *board, Cursor *cursor);
-bool CheckCursorMovement(Board *board, Cursor *cursor, CursorDir dir);
+bool IsMovementValid(Board *board, Cursor *cursor, CursorDir dir);
 void RenderTable(Board *board);
+void MoveCursor(Board *board, Cursor *cursor, CursorDir dir);
 void RenderCursor(Board *board, Cursor *cursor);
+void DeRenderCursor(Board *board, Cursor *cursor);
+
+void RenderLose(Board *board, Cursor *cursor);
 
 void GameLoop(MinesweeperGame *game, Cursor *cursor);

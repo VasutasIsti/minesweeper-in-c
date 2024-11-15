@@ -1,10 +1,17 @@
 #include "mswboard.h"
 #pragma once
 
+typedef enum GameState{
+    INGAME,
+    WIN,
+    LOSE
+} GameState;
+
 typedef struct MinesweeperGame{
     Board board;
     int flagsRemaining;
     int notvisited; // Count of cells that are not bombs nor visited
+    GameState state;
     // Time and other features can come here
 } MinesweeperGame;
 
