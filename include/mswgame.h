@@ -7,11 +7,16 @@ typedef enum GameState{
     LOSE
 } GameState;
 
+typedef struct debugInfos{
+    int emptyCount;
+} debugInfos;
+
 typedef struct MinesweeperGame{
     Board board;
     int flagsRemaining;
     int notvisited; // Count of cells that are not bombs nor visited
     GameState state;
+    debugInfos dInfo;
     // Time and other features can come here
 } MinesweeperGame;
 
@@ -36,3 +41,5 @@ void Next(MinesweeperGame *game, int x, int y);
 // Placeholders at the moment
 void Win(MinesweeperGame *game);
 void Lose(MinesweeperGame *game);
+
+void ResetAllDebugInfo(debugInfos *dInfo);

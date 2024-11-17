@@ -24,7 +24,7 @@ Cursor Init_Cursor(){
 }
 
 ScreenPositions SetPositions(MinesweeperGame *game) {
-    // WARNING: Not all of the variables are set, use it at your risk.
+    // WARNING: Not all the variables are set, use it at your risk.
     ScreenPositions sp;
     sp.corner_BR = (pos){game->board.sizeX*3+2 , game->board.sizeY+1};
     sp.belowTable = (pos){0, game->board.sizeY+2};
@@ -173,10 +173,11 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
     RenderDebugTable(&game->board);
     CursorToCenter(&game->board, cursor);
     RenderCursor(&game->board, cursor);
-    int key;
-    CursorDir dir;
+    int key = 0;
+    CursorDir dir = UNSET;
 
     while (true){
+        ResetAllDebugInfo(&game->dInfo);
         key = econio_getch();
         if (key == KEY_UP) dir = UP;
         else if (key == KEY_DOWN) dir = DOWN;
@@ -187,6 +188,9 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
         else if (key == 'f' || key == 'F')
             Flagging(game, cursor->x, cursor->y);
         
+        econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
+        printf("Empty=%d", game->dInfo.emptyCount);
+
         if (game->state == INGAME){
             MoveCursor(&game->board, cursor, dir);
             RenderTable(&game->board);

@@ -9,6 +9,9 @@ MinesweeperGame Init_Game(int x, int y, double diff){
     game.flagsRemaining = DifficultyToBombCount(x, y, diff);
     game.notvisited = (x*y)-game.flagsRemaining;
     SetupGame(&game.board);
+
+    game.dInfo = (debugInfos){0};
+
     return game;
 }
 
@@ -22,6 +25,8 @@ void Flagging(MinesweeperGame *game, int x, int y){
     // To not have more flags than bombs
     if (game->flagsRemaining == 0 && !game->board.cells[x][y].isFlaged)
         return;
+    if (game->board.cells[x][y].isVisited)
+        return;
     bool state = FlagCell(&game->board.cells[x][y]);
     if (state) game->flagsRemaining--;
     else       game->flagsRemaining++;
@@ -33,7 +38,7 @@ void VisitedSelected(MinesweeperGame *game, int x, int y){
             int **localempties = (int **)malloc(8*sizeof(int[2]));
             int localn = 0;
             int i = 0, j = 0;
-            // If any of the VALID cells are bombs and not flaged, the loop terminates early
+            // If any of the VALID cells are bombs and not flagged, the loop terminates early
             for (i = x-1; i <= x+1; i++){
                 for (j = y-1; j <= y+1; j++){
                     if ((i == x && j == y) || (!IsOnBoard(&game->board, i, j)) ||
@@ -86,9 +91,9 @@ void Next(MinesweeperGame *game, int x, int y){
                 There's no more task to do */
             break;
         case EMPTY:
-            FindAdjacentEmpties(&game->board, x, y);
+            game->dInfo.emptyCount = FindAdjacentEmpties(&game->board, x, y);
             break;
-        case VISITED:
+        case VISITED: 
             VisitedSelected(game, x, y);
             break;
         case BOMB:
@@ -113,4 +118,8 @@ void Win(MinesweeperGame *game){
 void Lose(MinesweeperGame *game){
     /*TODO:*/
     game->state = LOSE;
+}
+
+void ResetAllDebugInfo(debugInfos *dInfo){
+    *dInfo = (debugInfos){0};
 }

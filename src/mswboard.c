@@ -96,31 +96,29 @@ void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
     empties[*n][0] = x;
     empties[*n][1] = y;
     *n += 1;        // -Wall is killing me here, like *n++; is killing him...
-    if (board->cells[x][y].neighbours == 0){
-        for (int i = x-1; i <= x+1; i++)
-            for (int j = y-1; j <= y+1; j++)
-                if ((i == x && j == y) ||
-                    (!IsOnBoard(board, i, j)) ||
-                    (board->cells[i][j].neighbours != 0) ||
-                    (IsEmptyListed(empties, *n, x, y)))
-                        continue;
-                else if (!board->cells[i][j].isVisited)
-                    // It's just an optimization, if my math is mathing
-                    // It wont check cells that was visited before.
-                    CheckAdjacents(board, i, j, empties, n);
-    }
+    for (int i = x-1; i <= x+1; i++)
+        for (int j = y-1; j <= y+1; j++)
+            if ((i == x && j == y) ||
+                (!IsOnBoard(board, i, j)) ||
+                (IsEmptyListed(empties, *n, i, j)))
+                    continue;
+            else if((board->cells[i][j].neighbours == 0) &&
+                    (!board->cells[i][j].isVisited))
+                CheckAdjacents(board, i, j, empties, n);
 }
 
-void FindAdjacentEmpties(Board *board, int x, int y){
+int FindAdjacentEmpties(Board *board, int x, int y){
     int size = board->sizeX * board->sizeY;
     int **empties = (int **)malloc(size * sizeof(int *));
     for (int i = 0; i < size; i++)
         empties[i] = (int *)malloc(2*sizeof(int));
     int n = 0;
     CheckAdjacents(board, x, y, empties, &n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
         board->cells[empties[i][0]][empties[i][1]].isVisited = true;
+
+    for (int i = 0; i < size; i++)
         free(empties[i]);
-    }
     free(empties);
+    return n;
 }
