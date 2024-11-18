@@ -65,9 +65,9 @@ int NeighbouringFlags(Board *board, int x, int y){
     int flags = 0;
     for (int i = x-1; i <= x+1; i++)
         for (int j = y-1; j <= y+1; j++)
-            if (!IsOnBoard(board, x, y) || (i == x && j == y))
+            if (!IsOnBoard(board, i, j) || (i == x && j == y))
                 continue;
-            else
+            else if (board->cells[i][j].isFlaged)
                 flags++;
     return flags;
 }
@@ -95,7 +95,7 @@ void SetNeighbourCounts(Board *board){
 void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
     empties[*n][0] = x;
     empties[*n][1] = y;
-    *n += 1;        // -Wall is killing me here, like *n++; is killing him...
+    (*n)++;        // -Wall is killing me here, like *n++; is killing him...
     for (int i = x-1; i <= x+1; i++)
         for (int j = y-1; j <= y+1; j++)
             if ((i == x && j == y) ||
@@ -105,6 +105,12 @@ void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
             else if((board->cells[i][j].neighbours == 0) &&
                     (!board->cells[i][j].isVisited))
                 CheckAdjacents(board, i, j, empties, n);
+            else if (board->cells[i][j].neighbours > 0) {
+                empties[*n][0] = i;
+                empties[*n][1] = j;
+                (*n)++;
+            }
+
 }
 
 int FindAdjacentEmpties(Board *board, int x, int y){

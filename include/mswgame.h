@@ -13,6 +13,7 @@ typedef struct debugInfos{
 
 typedef struct MinesweeperGame{
     Board board;
+    char user[50];
     int flagsRemaining;
     int notvisited; // Count of cells that are not bombs nor visited
     GameState state;

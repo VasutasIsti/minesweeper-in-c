@@ -1,9 +1,11 @@
 #include "mswgame.h"
 #include <stdlib.h>
+#include <string.h>
 #include "debugmalloc.h"
 
-MinesweeperGame Init_Game(int x, int y, double diff){
+MinesweeperGame Init_Game(char *user, int x, int y, double diff){
     MinesweeperGame game;
+    strcpy(game.user, user);
     game.state = INGAME;
     game.board = Init_Board(x, y, diff);
     game.flagsRemaining = DifficultyToBombCount(x, y, diff);
@@ -33,45 +35,67 @@ void Flagging(MinesweeperGame *game, int x, int y){
 }
 
 void VisitedSelected(MinesweeperGame *game, int x, int y){
-    if (NeighbouringFlags(&game->board, x, y) ==
-        game->board.cells[x][y].neighbours){
-            int **localempties = (int **)malloc(8*sizeof(int[2]));
-            int localn = 0;
-            int i = 0, j = 0;
-            // If any of the VALID cells are bombs and not flagged, the loop terminates early
-            for (i = x-1; i <= x+1; i++){
-                for (j = y-1; j <= y+1; j++){
-                    if ((i == x && j == y) || (!IsOnBoard(&game->board, i, j)) ||
-                        (game->board.cells[i][j].isVisited) || (game->board.cells[i][j].isFlaged) )
-                        continue;
-                    else if (game->board.cells[i][j].isBomb && !game->board.cells[i][j].isFlaged){
-                        break;
-                    }
-                    else {
-                        localempties[localn][0] = i;
-                        localempties[localn][1] = j;
-                        localn+=1;
-                    }
-                }
-                if (j != y+2)
-                    break;
-            }
-            if (i != x+2){
-                free(localempties);
-                Lose(game);
+    if (NeighbouringFlags(&game->board, x, y) !=
+        game->board.cells[x][y].neighbours)
+        return;
+    int **localempties = (int **)malloc(8*sizeof(int *));
+    for (int i = 0; i < 8; i++)
+        localempties[i] = (int *)malloc(2*sizeof(int));
+    int localn = 0;
+    int i = 0, j = 0;
+    // If any of the VALID cells are bombs and not flagged, the loop terminates early
+    for (i = x-1; i <= x+1; i++){
+        for (j = y-1; j <= y+1; j++){
+            if ((i == x && j == y) || (!IsOnBoard(&game->board, i, j)) ||
+                (game->board.cells[i][j].isVisited) || (game->board.cells[i][j].isFlaged) )
+                continue;
+            else if (game->board.cells[i][j].isBomb && !game->board.cells[i][j].isFlaged){
+                break;
             }
             else {
-                int **empties = (int **)malloc((game->board.sizeX*game->board.sizeY)*sizeof(int[2]));
-                int n = 0;
-                for (int i = 0; i < localn; i++){
-                    if (!IsEmptyListed(empties, n, localempties[i][0], localempties[i][1]))
-                        CheckAdjacents(&game->board, localempties[i][0], localempties[i][1], empties, &n);
-                }
-                free(localempties);
-                for (int i = 0; i < n; i++)
-                    game->board.cells[empties[i][0]][empties[i][1]].isVisited = true;
-                free(empties);
+                localempties[localn][0] = i;
+                localempties[localn][1] = j;
+                localn+=1;
             }
+        }
+        if (j != y+2)
+            break;
+    }
+    if (i != x+2){
+        for (int k = 0; k < 8; k++)
+            free(localempties[i]);
+        free(localempties);
+        Lose(game);
+    }
+    else {
+        // i and j were used, so every loop var is k now. Yeaaaah
+        int size = game->board.sizeX * game->board.sizeY;
+        int **empties = (int **)malloc(size*sizeof(int *));
+        for (int k = 0; k < size; k++)
+            empties[k] = (int *)malloc(2*sizeof(int));
+        
+        int n = 0;
+        for (int k = 0; k < localn; k++){
+            if (IsEmptyListed(empties, n, localempties[k][0], localempties[k][1]))
+                continue;
+            else if (game->board.cells[localempties[k][0]][localempties[k][1]].neighbours == 0)
+                CheckAdjacents(&game->board, localempties[k][0], localempties[k][1], empties, &n);
+            else{
+                empties[n][0] = localempties[k][0];
+                empties[n][1] = localempties[k][1];
+                n++;
+            }
+        }
+
+        for (int k = 0; k < n; k++)
+            game->board.cells[empties[k][0]][empties[k][1]].isVisited = true;
+        
+        for (int k = 0; k < 8; k++)
+            free(localempties[k]);
+        free(localempties);
+        for (int k = 0; k < size; k++)
+            free(empties[k]);
+        free(empties);
     }
 }
 

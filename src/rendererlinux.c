@@ -46,6 +46,23 @@ char RenderedValue(Cell *cell){
     else return '?';
 }
 
+int RenderedValueColor(char c){
+    // Not the best way to implement, but it was fast
+    if (c == '1') return COL_LIGHTBLUE;
+    if (c == '2') return COL_GREEN;
+    if (c == '3') return COL_RED;
+    if (c == '4') return COL_BLUE;
+    if (c == '5') return COL_BROWN;
+    if (c == '6') return COL_CYAN;
+    if (c == '7') return COL_BLACK;
+    if (c == '8') return COL_LIGHTGRAY;
+    if (c == '#') return COL_LIGHTGREEN;
+    if (c == '-') return COL_DARKGRAY;
+    if (c == '*') return COL_LIGHTRED;
+    // And a default
+    return COL_WHITE;
+}
+
 char *HorizontalBorder(Board *board){
     char *hl = (char *)malloc((board->sizeX*3+2+1)*sizeof(char));
     int i;
@@ -188,8 +205,12 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
         else if (key == 'f' || key == 'F')
             Flagging(game, cursor->x, cursor->y);
         
-        econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
-        printf("Empty=%d", game->dInfo.emptyCount);
+        /* The lines below are used to debugging. Uncomment the
+           necessary lines as needed. Not the best, I know, but
+           time is ticking and I'm running out of it.*/
+
+        //econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
+        //printf("Empty=%d", game->dInfo.emptyCount);
 
         if (game->state == INGAME){
             MoveCursor(&game->board, cursor, dir);
@@ -199,10 +220,10 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
         }
         else if (game->state == LOSE){
             RenderLose(&game->board, cursor);
-            econio_gotoxy(sp.corner_BR.x, sp.corner_BR.y);
+            econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
             printf("Game Failed. Press any key to exit");
             
-            econio_kbhit();
+            econio_sleep(3.0);
             break;
         }
     }
