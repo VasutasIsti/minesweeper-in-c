@@ -113,18 +113,4 @@ void CheckAdjacents(Board *board, int x, int y, int **empties, int *n){
 
 }
 
-int FindAdjacentEmpties(Board *board, int x, int y){
-    int size = board->sizeX * board->sizeY;
-    int **empties = (int **)malloc(size * sizeof(int *));
-    for (int i = 0; i < size; i++)
-        empties[i] = (int *)malloc(2*sizeof(int));
-    int n = 0;
-    CheckAdjacents(board, x, y, empties, &n);
-    for (int i = 0; i < n; i++)
-        board->cells[empties[i][0]][empties[i][1]].isVisited = true;
 
-    for (int i = 0; i < size; i++)
-        free(empties[i]);
-    free(empties);
-    return n;
-}

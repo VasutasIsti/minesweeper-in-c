@@ -2,9 +2,9 @@
 #pragma once
 
 typedef enum GameState{
-    INGAME,
-    WIN,
-    LOSE
+    INGAME = 0,
+    WIN = 1,
+    LOSE = 2
 } GameState;
 
 typedef struct debugInfos{
@@ -28,12 +28,13 @@ enum VisitOutcome{
     BOMB
 };
 
-MinesweeperGame Init_Game(int x, int y, double diff);
+MinesweeperGame Init_Game(char *user, int x, int y, double diff);
 // Note: Maybe a game destructer is needed if I want to make a
 //       specific behaviour.
 
 void SetupGame(Board *board);
 void Flagging(MinesweeperGame *game, int x, int y);
+int FindAdjacentEmpties(MinesweeperGame *game, int x, int y);
 void VisitedSelected(MinesweeperGame *game, int x, int y);
 
 enum VisitOutcome VisitCell(Cell *cell);

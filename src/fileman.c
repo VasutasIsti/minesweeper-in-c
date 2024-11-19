@@ -1,3 +1,6 @@
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
 #include "fileman.h"
 #include "mswgame.h"
 // This portion of the program was made in a last minute
@@ -5,45 +8,63 @@
 // I can do, but time is my enemy, and he it seems like
 // she's wining.
 
-Entry *Init_FileMan(char *fileName){
-    if (fileName == NULL /*|| fileName == ""*/) {
+void Init_FileMan(Entry *entries, char *fileName){
+    if (fileName == NULL) {
         // Something is wrong within if...
         printf("Error: File Name not set");
-        return NULL;
+        return;
     }
+    printf("Filename in InitMan()=%s\n", fileName);
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
-        printf("Error while file handling...\n");
-        return NULL;
+        printf("Error opening file \"%s\"...\n", fileName);
+        return;
     }
     // Only the best 10 entries are saved. Pretend that the file
     // is always correct, and no error can arrais from it being
     // messed up. Deadline moments
 
     // Oh, and the entries in the file are not in any order.
-    Entry list[10];
-    char line[256];
     for (int i = 0; i < 10; i++) {
-        fscanf(file, "%s[^;]%d;%d;%lf;%d",
-                    list[i].name,
-                    list[i].x,
-                    list[i].y,
-                    list[i].diff,
-                    list[i].won);
+        if (fscanf(file, "%50[^;];%d;%d;%lf;%d\n", entries[i].name, &entries[i].x,
+                &entries[i].y, &entries[i].diff, (int *)&entries[i].won) != 5 ) {
+            if (feof(file))
+                break;
+            else {
+                printf("Error reading file");
+                break;
+            }
+        }
     }
     fclose(file);
-    return list;
+}
+
+void WriteFileContent(Entry *entries){
+    for (int i = 0; i < 10; i++)
+        printf("%s;%d;%d;%g;%d\n", entries[i].name, entries[i].x,
+                entries[i].y, entries[i].diff, entries[i].won);
 }
 
 void fileStuffs(MinesweeperGame *game, char *fileName){
-    Entry entries[10] = Init_FileMan(fileName);
+    Entry *entries = (Entry *)malloc(10*sizeof(Entry));
+    if (entries == NULL) {
+        printf("Cannot allocate memory for file operations.\n");
+        return;
+    }
+    Init_FileMan(entries, fileName);
+    if (entries[0].name == NULL) {
+        printf("Broken data in file \"%s\".\n", fileName);
+        return;
+    }
+    WriteFileContent(entries);
     if (entries == NULL)
         return;
-    Entry current = (Entry){game->user,
-                            game->board.sizeX,
-                            game->board.sizeY,
-                            game->board.difficulty,
-                            (game->state == WIN)};
+    Entry *current = (Entry *)malloc(sizeof(Entry));
+    current->name = game->user;
+    current->x = game->board.sizeX;
+    current->y = game->board.sizeY;
+    current->diff = game->board.difficulty;
+    current->won = (game->state == WIN);
     // quick info: the best entries are chosed by
     //      1. greater size (if equal, the latest)
     //      2. difficulty (same)
@@ -56,22 +77,30 @@ void fileStuffs(MinesweeperGame *game, char *fileName){
         if ((entries[i].x * entries[i].y) <
             (entries[mini].x * entries[mini].y))
             continue;
-        if (entries[i].diff < entries[mini].diff)
-            continue;
-        if (!entries[i].won || (!entries[i].won && entries[mini].won))
-            continue;
+        else if ((entries[i].x * entries[i].y) ==
+            (entries[mini].x * entries[mini].y)) {
+            if (entries[i].diff < entries[mini].diff)
+                continue;
+            else if (entries[i].diff == entries[mini].diff)
+                if (!entries[i].won || (!entries[i].won && entries[mini].won))
+                    continue;
+        }
         mini = i;
     }
     // A schizophrenic early return style or something 
-    if ((current.x * current.y) < (entries[mini].x * entries[mini].y))
+    if ((current->x * current->y) < (entries[mini].x * entries[mini].y))
         ;
-    else if (current.diff < entries[mini].diff)
+    else if (current->diff < entries[mini].diff)
         ;
-    else if (!current.won || (!current.won && entries[mini].won))
+    else if (!current->won || (!current->won && entries[mini].won))
         ;
     else {
         printf("Congrats, You've made it to the leaderboards.");
-        entries[mini] = current;
+        entries[mini].name = current->name;
+        entries[mini].x = current->x;
+        entries[mini].y = current->y;
+        entries[mini].diff = current->diff;
+        entries[mini].won = current->won;
     }
 
     FILE *file = fopen(fileName, "w");

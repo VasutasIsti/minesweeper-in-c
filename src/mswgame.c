@@ -34,6 +34,24 @@ void Flagging(MinesweeperGame *game, int x, int y){
     else       game->flagsRemaining++;
 }
 
+int FindAdjacentEmpties(MinesweeperGame *game, int x, int y){
+    int size = game->board.sizeX * game->board.sizeY;
+    int **empties = (int **)malloc(size * sizeof(int *));
+    for (int i = 0; i < size; i++)
+        empties[i] = (int *)malloc(2*sizeof(int));
+    int n = 0;
+    CheckAdjacents(&game->board, x, y, empties, &n);
+    for (int i = 0; i < n; i++) {
+        if (!game->board.cells[empties[i][0]][empties[i][1]].isVisited)
+            game->notvisited--;
+        game->board.cells[empties[i][0]][empties[i][1]].isVisited = true;
+    }
+    for (int i = 0; i < size; i++)
+        free(empties[i]);
+    free(empties);
+    return n;
+}
+
 void VisitedSelected(MinesweeperGame *game, int x, int y){
     if (NeighbouringFlags(&game->board, x, y) !=
         game->board.cells[x][y].neighbours)
@@ -87,9 +105,11 @@ void VisitedSelected(MinesweeperGame *game, int x, int y){
             }
         }
 
-        for (int k = 0; k < n; k++)
+        for (int k = 0; k < n; k++) {
+            if (!game->board.cells[empties[k][0]][empties[k][1]].isVisited)
+                game->notvisited--;
             game->board.cells[empties[k][0]][empties[k][1]].isVisited = true;
-        
+        }
         for (int k = 0; k < 8; k++)
             free(localempties[k]);
         free(localempties);
@@ -111,11 +131,11 @@ enum VisitOutcome VisitCell(Cell *cell){
 void Next(MinesweeperGame *game, int x, int y){
     switch (VisitCell(&game->board.cells[x][y])){
         case NUMBER:
-            /*  The cell is visited by VisitCell(),
-                There's no more task to do */
+            /*  The cell is visited by VisitCell(),*/
+            game->notvisited--;
             break;
         case EMPTY:
-            game->dInfo.emptyCount = FindAdjacentEmpties(&game->board, x, y);
+            game->dInfo.emptyCount = FindAdjacentEmpties(game, x, y);
             break;
         case VISITED: 
             VisitedSelected(game, x, y);

@@ -23,4 +23,3 @@ int NeighbouringFlags(Board *board, int x, int y);
 void PlaceBombs(Board *board);
 void SetNeighbourCounts(Board *board);
 void CheckAdjacents(Board *board, int x, int y, int **empties, int *n);
-int FindAdjacentEmpties(Board *board, int x, int y);

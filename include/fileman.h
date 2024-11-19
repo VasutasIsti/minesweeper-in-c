@@ -3,13 +3,13 @@
 #include "mswgame.h"
 
 typedef struct Entry{
-    char name[50];
+    char *name;
     int x;
     int y;
     double diff;
     bool won;
 } Entry;
 
-Entry *Init_FileMan(char *fileName);
-
+void Init_FileMan(Entry *entries, char *fileName);
+void WriteFileContent(Entry *entries);
 void fileStuffs(MinesweeperGame *game, char *fileName); // Last minute naming

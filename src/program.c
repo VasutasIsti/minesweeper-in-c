@@ -24,7 +24,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
 
     printf("Add the following paramaters.\n");
     printf("Name (max 49 characters): ");
-    scanf("%s", &name);
+    scanf("%s", name);
     int num;
     while (true){
         printf("Board width (5 - 50)[%d]: ", locx);
@@ -82,17 +82,18 @@ int main(){
     char name[50];
     int sizeX = 10, sizeY = 10;
     double difficulty = 0.2;
-    char fileName[50] = "leaderboard.txt";
-    GetInformation(&name, &sizeX, &sizeY, &difficulty);
-    MinesweeperGame game = Init_Game(sizeX, sizeY, difficulty);
+    char *fileName = "leaderboard.txt\0";
+    GetInformation(name, &sizeX, &sizeY, &difficulty);
+    MinesweeperGame game = Init_Game(name, sizeX, sizeY, difficulty);
     Cursor cursor = Init_Cursor();
 
     #ifdef LINUX
     GameLoop(&game, &cursor);
     #endif
 
-    Init_FileMan(fileName);
-    fileStuffs(&game, fileName);
+    // printf("%s\n", fileName);
+    if (game.state == WIN)
+        fileStuffs(&game, fileName);
 
     Destruct_Board(&game.board);
 }

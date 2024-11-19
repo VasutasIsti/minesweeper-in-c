@@ -102,7 +102,7 @@ char RenderedValueD(Cell *cell){
 
 void RenderDebugTable(Board *board) {
     char *hl = HorizontalBorder(board);
-    econio_gotoxy(0, board->sizeY+5);
+    econio_gotoxy(0, board->sizeY+10);
     printf("%s\n", hl);
     for (int j = 0; j < board->sizeY; j++){
         printf("|");
@@ -209,8 +209,11 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
            necessary lines as needed. Not the best, I know, but
            time is ticking and I'm running out of it.*/
 
-        //econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
+        econio_gotoxy(sp.belowTable.x, sp.belowTable.y+1);
         //printf("Empty=%d", game->dInfo.emptyCount);
+        printf("FlagsRemaining = %03d\n", game->flagsRemaining);
+        printf("NotVisited = %03d\n", game->notvisited);
+        printf("GameState = %d\n", game->state);
 
         if (game->state == INGAME){
             MoveCursor(&game->board, cursor, dir);
@@ -221,8 +224,14 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
         else if (game->state == LOSE){
             RenderLose(&game->board, cursor);
             econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
-            printf("Game Failed. Press any key to exit");
+            printf("Game Failed. The game exits in 3 seconds.\n");
             
+            econio_sleep(3.0);
+            break;
+        }
+        else if (game->state == WIN) {
+            econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
+            printf("Game Won. Well done. The game exits in 3 seconds.\n");
             econio_sleep(3.0);
             break;
         }
