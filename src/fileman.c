@@ -26,8 +26,9 @@ void Init_FileMan(Entry *entries, char *fileName){
 
     // Oh, and the entries in the file are not in any order.
     for (int i = 0; i < 10; i++) {
-        if (fscanf(file, "%50[^;];%d;%d;%lf;%d\n", entries[i].name, &entries[i].x,
-                &entries[i].y, &entries[i].diff, (int *)&entries[i].won) != 5 ) {
+        char booleaner = '\0';
+        if (fscanf(file, "%[^;]s", entries[i].name) + fscanf(file, ";%d;%d;%lf;%c", &entries[i].x,
+            &entries[i].y, &entries[i].diff, &booleaner) != 5 ) {
             if (feof(file))
                 break;
             else {
@@ -35,6 +36,8 @@ void Init_FileMan(Entry *entries, char *fileName){
                 break;
             }
         }
+        if (booleaner != '\0')
+            entries[i].won = booleaner - '0';
     }
     fclose(file);
 }
@@ -42,7 +45,7 @@ void Init_FileMan(Entry *entries, char *fileName){
 void WriteFileContent(Entry *entries){
     for (int i = 0; i < 10; i++)
         printf("%s;%d;%d;%g;%d\n", entries[i].name, entries[i].x,
-                entries[i].y, entries[i].diff, entries[i].won);
+                entries[i].y, entries[i].diff, (int)entries[i].won);
 }
 
 void fileStuffs(MinesweeperGame *game, char *fileName){

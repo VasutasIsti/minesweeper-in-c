@@ -7,7 +7,7 @@ typedef struct Entry{
     int x;
     int y;
     double diff;
-    bool won;
+    bool won; // It is a nightmare
 } Entry;
 
 void Init_FileMan(Entry *entries, char *fileName);
