@@ -25,6 +25,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
     printf("Add the following paramaters.\n");
     printf("Name (max 49 characters): ");
     scanf("%s", name);
+
     int num;
     while (true){
         printf("Board width (5 - 50)[%d]: ", locx);

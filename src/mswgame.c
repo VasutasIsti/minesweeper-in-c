@@ -121,7 +121,7 @@ void VisitedSelected(MinesweeperGame *game, int x, int y){
 
 enum VisitOutcome VisitCell(Cell *cell){
     if (cell->isVisited) return VISITED;
-
+    if (cell->isFlaged) return FLAGGED;
     cell->isVisited = true;
     if (cell->neighbours > 0) return NUMBER;
     if (cell->isBomb) return BOMB;
@@ -130,6 +130,9 @@ enum VisitOutcome VisitCell(Cell *cell){
 
 void Next(MinesweeperGame *game, int x, int y){
     switch (VisitCell(&game->board.cells[x][y])){
+        case FLAGGED:
+            // Nothing to be done
+            break;
         case NUMBER:
             /*  The cell is visited by VisitCell(),*/
             game->notvisited--;

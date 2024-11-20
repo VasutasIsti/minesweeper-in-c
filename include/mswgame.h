@@ -25,6 +25,7 @@ enum VisitOutcome{
     NUMBER,
     EMPTY,
     VISITED,
+    FLAGGED,
     BOMB
 };
 
