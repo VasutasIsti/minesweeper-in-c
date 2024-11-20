@@ -136,6 +136,7 @@ void Next(MinesweeperGame *game, int x, int y){
             break;
         case EMPTY:
             game->dInfo.emptyCount = FindAdjacentEmpties(game, x, y);
+            game->notvisited--;
             break;
         case VISITED: 
             VisitedSelected(game, x, y);
@@ -150,7 +151,7 @@ void Next(MinesweeperGame *game, int x, int y){
        of the minesweepers is not needed, if you guess the correct flagging, it
        automatically wins the game... Not a big problem, but requires some
        attention sooner or later. */ 
-    if (game->notvisited == 0 && game->flagsRemaining == 0)
+    if (game->notvisited == 0)
         Win(game);
 }
 

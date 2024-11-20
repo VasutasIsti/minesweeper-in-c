@@ -27,15 +27,11 @@ void Init_FileMan(Entry *entries, char *fileName){
     // Oh, and the entries in the file are not in any order.
     for (int i = 0; i < 10; i++) {
         char booleaner = '\0';
-        if (fscanf(file, "%[^;]s", entries[i].name) + fscanf(file, ";%d;%d;%lf;%c", &entries[i].x,
-            &entries[i].y, &entries[i].diff, &booleaner) != 5 ) {
-            if (feof(file))
-                break;
-            else {
-                printf("Error reading file");
-                break;
-            }
-        }
+        fscanf(file, "%[^;]s", entries[i].name);
+        fscanf(file, ";%d;",  &entries[i].x);
+        fscanf(file, "%d;",   &entries[i].y);
+        fscanf(file, "%lf;",  &entries[i].diff);
+        fscanf(file, "%c",    &booleaner);
         if (booleaner != '\0')
             entries[i].won = booleaner - '0';
     }
