@@ -4,22 +4,22 @@
 #include "fileman.h"
 #include "mswgame.h"
 
-char *strfile(FILE *f, int n)
+char *strfile(FILE *file, int n)
 {
     char c;
     char *str;
 
-    bool end = fscanf(f, "%c", &c) != 1 || c == '\n';
+    bool end = fscanf(file, "%c", &c) != 1 || c == '\n';
 
-    str = end ? (char *)malloc((n + 1) * sizeof(char)) : strfile(f, n+1);
+    str = end ? (char *)malloc((n + 1) * sizeof(char)) : strfile(file, n+1);
     str[n] = end ? '\0' : c;
 
     return str;
 }
 
-char *readline(FILE *f)
+char *readline(FILE *file)
 {
-    return strfile(f, 0);
+    return strfile(file, 0);
 }
 
 // This portion of the program was made in a last minute
@@ -33,7 +33,7 @@ void Init_FileMan(Entry *entries, char *fileName){
         printf("Error: File Name not set");
         return;
     }
-    printf("Filename in InitMan()=%s\n", fileName);
+    // printf("Filename in InitMan()=%s\n", fileName);
     FILE *file = fopen(fileName, "r");
     if (file == NULL) {
         printf("Error opening file \"%s\"...\n", fileName);
@@ -46,11 +46,16 @@ void Init_FileMan(Entry *entries, char *fileName){
     // Oh, and the entries in the file are not in any order.
     for (int i = 0; i < 10; i++) {
         char *line = readline(file);
-        Entry *e = entries+i;
+        Entry *current = entries+i;
 
+        // The fuckery begins, boolean was not easy to optain
         char booleaner = '\0';
-        sscanf(line, "%[^;]", e->name);
-        sscanf(line+strlen(e->name), ";%d;%d;%lf;%c", &e->x, &e->y, &e->diff, &booleaner);
+        // and after that, fscaf() was so buggy, so it was time to use strings
+        // and from a string, it was not buggy to differentiate data types in one row
+        sscanf(line, "%[^;]", current->name);
+        sscanf(line+strlen(current->name), ";%d;%d;%lf;%c",
+                    &current->x, &current->y,
+                    &current->diff, &booleaner);
 
         if (booleaner != '\0')
             entries[i].won = booleaner - '0';
@@ -92,7 +97,7 @@ void fileStuffs(MinesweeperGame *game, char *fileName){
     current->won = (game->state == WIN);
 
     // printf("Current "); WriteEntry(current);
-    
+
     // quick info: the best entries are chosed by
     //      1. greater size (if equal, the latest)
     //      2. difficulty (same)

@@ -11,5 +11,9 @@ typedef struct Entry{
 } Entry;
 
 void Init_FileMan(Entry *entries, char *fileName);
-void WriteFileContent(Entry *entries);
 void fileStuffs(MinesweeperGame *game, char *fileName); // Last minute naming
+
+void WriteEntry(Entry *entry);
+void WriteFileContent(Entry *entries);
+char *strfile(FILE *file, int n);
+char *readline(FILE *file);
