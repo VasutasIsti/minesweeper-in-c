@@ -4,30 +4,13 @@
 #include "fileman.h"
 #include "mswgame.h"
 
-char *strfile(FILE *file, int n)
-{
-    char c;
-    char *str;
-
-    bool end = fscanf(file, "%c", &c) != 1 || c == '\n';
-
-    str = end ? (char *)malloc((n + 1) * sizeof(char)) : strfile(file, n+1);
-    str[n] = end ? '\0' : c;
-
-    return str;
-}
-
-char *readline(FILE *file)
-{
-    return strfile(file, 0);
-}
 
 // This portion of the program was made in a last minute
 // enviroment, so there are many things that isn't the best
 // I can do, but time is my enemy, and he it seems like
 // she's wining.
 
-void Init_FileMan(Entry *entries, char *fileName){
+void Init_FileMan(Entry *entries, char *fileName) {
     if (fileName == NULL) {
         // Something is wrong within if...
         printf("Error: File Name not set");
@@ -65,27 +48,39 @@ void Init_FileMan(Entry *entries, char *fileName){
     fclose(file);
 }
 
-void WriteEntry(Entry *entry){
+void WriteEntry(Entry *entry) {
     printf("%s;%d;%d;%g;%d\n", entry->name, entry->x,
             entry->y, entry->diff, entry->won);
 }
 
-void WriteFileContent(Entry *entries){
+void WriteFileContent(Entry *entries) {
     for (int i = 0; i < 10; i++)
         WriteEntry(&entries[i]);
 }
 
-void fileStuffs(MinesweeperGame *game, char *fileName){
+char *strfile(FILE *file, int n) {
+    char c;
+    char *str;
+
+    bool end = fscanf(file, "%c", &c) != 1 || c == '\n';
+
+    str = end ? (char *)malloc((n + 1) * sizeof(char)) : strfile(file, n+1);
+    str[n] = end ? '\0' : c;
+
+    return str;
+}
+
+char *readline(FILE *file) {
+    return strfile(file, 0);
+}
+
+void fileStuffs(MinesweeperGame *game, char *fileName) {
     Entry *entries = (Entry *)malloc(10*sizeof(Entry));
     if (entries == NULL) {
         printf("Cannot allocate memory for file operations.\n");
         return;
     }
     Init_FileMan(entries, fileName);
-    if (entries[0].name == NULL) {
-        printf("Broken data in file \"%s\".\n", fileName);
-        return;
-    }
     // WriteFileContent(entries);
     if (entries == NULL)
         return;

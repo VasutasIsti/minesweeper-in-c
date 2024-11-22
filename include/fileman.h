@@ -3,7 +3,7 @@
 #include "mswgame.h"
 
 typedef struct Entry{
-    char name[50+1];
+    char name[50];
     int x;
     int y;
     double diff;

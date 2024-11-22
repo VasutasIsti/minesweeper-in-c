@@ -15,7 +15,7 @@
 // TODO: make rendererSDL.h
 #endif
 
-void GetInformation(char *name, int *x, int *y, double *diff){
+void GetInformation(char *name, int *x, int *y, double *diff) {
     int locx = *x, locy = *y;
     double locd = *diff;
     // Hard limits
@@ -27,7 +27,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
     scanf("%s", name);
 
     int num;
-    while (true){
+    while (true) {
         printf("Board width (5 - 50)[%d]: ", locx);
         num = scanf("%d", x);
         if (num != 1) {
@@ -43,7 +43,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
             break;
         }
     }
-    while (true){
+    while (true) {
         printf("Board height (5 - 50)[%d]: ", locy);
         num = scanf("%d", y);
         if (num != 1) {
@@ -59,7 +59,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
             break;
         }
     }
-    while (true){
+    while (true) {
         printf("Bomb percentage (0.01 - 1.0)[%g]: ", locd);
         num = scanf("%lf", diff);
         if (num == 0) break;
@@ -79,7 +79,7 @@ void GetInformation(char *name, int *x, int *y, double *diff){
 
 }
 
-int main(){
+int main() {
     char name[50];
     int sizeX = 10, sizeY = 10;
     double difficulty = 0.2;

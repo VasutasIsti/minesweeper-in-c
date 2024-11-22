@@ -5,20 +5,20 @@
 #include "rendererlinux.h"
 #include "debugmalloc.h"
 
-void StartRendering(){
+void StartRendering() {
     printf(ENTER_AS);
     fflush(stdout);
     econio_set_title("Minesweeper in C - TEST");
     econio_rawmode();
 }
 
-void FinishRendering(){
+void FinishRendering() {
     econio_normalmode();
     printf(EXIT_AS);
     fflush(stdout);
 }
 
-Cursor Init_Cursor(){
+Cursor Init_Cursor() {
     Cursor cursor = {0, 0};
     return cursor;
 }
@@ -32,12 +32,12 @@ ScreenPositions SetPositions(MinesweeperGame *game) {
     return sp;
 }
 
-void CursorToCenter(Board *board, Cursor *cursor){
+void CursorToCenter(Board *board, Cursor *cursor) {
     cursor->x = board->sizeX/2;
     cursor->y = board->sizeY/2;
 }
 
-char RenderedValue(Cell *cell){
+char RenderedValue(Cell *cell) {
     if (cell->isFlaged) return '#';
     else if (!cell->isVisited) return '-';
     else if (cell->neighbours == 0) return ' ';
@@ -46,7 +46,7 @@ char RenderedValue(Cell *cell){
     else return '?';
 }
 
-int RenderedValueColor(char c){
+int RenderedValueColor(char c) {
     // Not the best way to implement, but it was fast
     if (c == '1') return COL_LIGHTBLUE;
     if (c == '2') return COL_GREEN;
@@ -63,7 +63,7 @@ int RenderedValueColor(char c){
     return COL_WHITE;
 }
 
-char *HorizontalBorder(Board *board){
+char *HorizontalBorder(Board *board) {
     char *hl = (char *)malloc((board->sizeX*3+2+1)*sizeof(char));
     int i;
     hl[0] = '+';
@@ -74,15 +74,15 @@ char *HorizontalBorder(Board *board){
     return hl;
 }
 
-void RenderTable(Board *board){
+void RenderTable(Board *board) {
 
     // the upper and lower borders of the board
     char *hl = HorizontalBorder(board);
     econio_gotoxy(0,0);
     printf("%s\n", hl);
-    for (int j = 0; j < board->sizeY; j++){
+    for (int j = 0; j < board->sizeY; j++) {
         printf("|");
-        for (int i = 0; i < board->sizeX; i++){
+        for (int i = 0; i < board->sizeX; i++) {
             printf(" %c ", RenderedValue(&board->cells[i][j]));
         }
         printf("|\n");
@@ -91,7 +91,7 @@ void RenderTable(Board *board){
     free(hl);
 }
 
-char RenderedValueD(Cell *cell){
+char RenderedValueD(Cell *cell) {
     if (cell->isFlaged) return '#';
     //else if (!cell->isVisited) return '-';
     else if (cell->neighbours == 0) return ' ';
@@ -104,9 +104,9 @@ void RenderDebugTable(Board *board) {
     char *hl = HorizontalBorder(board);
     econio_gotoxy(0, board->sizeY+10);
     printf("%s\n", hl);
-    for (int j = 0; j < board->sizeY; j++){
+    for (int j = 0; j < board->sizeY; j++) {
         printf("|");
-        for (int i = 0; i < board->sizeX; i++){
+        for (int i = 0; i < board->sizeX; i++) {
             printf(" %c ", RenderedValueD(&board->cells[i][j]));
         }
         printf("|\n");
@@ -115,7 +115,7 @@ void RenderDebugTable(Board *board) {
     free(hl);
 }
 
-bool IsMovementValid(Board *board, Cursor *cursor, CursorDir dir){
+bool IsMovementValid(Board *board, Cursor *cursor, CursorDir dir) {
     if ((cursor->x == 0 && dir == LEFT) ||
         (cursor->x == board->sizeX-1 && dir == RIGHT) ||
         (cursor->y == 0 && dir == UP) ||
@@ -124,9 +124,9 @@ bool IsMovementValid(Board *board, Cursor *cursor, CursorDir dir){
     return true;
 }
 
-void MoveCursor(Board *board, Cursor *cursor, CursorDir dir){
+void MoveCursor(Board *board, Cursor *cursor, CursorDir dir) {
     if (dir == UNSET) return;
-    if (IsMovementValid(board, cursor, dir)){
+    if (IsMovementValid(board, cursor, dir)) {
         DeRenderCursor(board, cursor);
         if (dir == UP)         cursor->y-=1;
         else if (dir == DOWN)  cursor->y+=1;
@@ -136,7 +136,7 @@ void MoveCursor(Board *board, Cursor *cursor, CursorDir dir){
     RenderCursor(board, cursor);
 }
 
-void RenderCursor(Board *board, Cursor *cursor){
+void RenderCursor(Board *board, Cursor *cursor) {
     econio_gotoxy(cursor->x*3+1, cursor->y+1);
     printf("<");
     econio_gotoxy(cursor->x*3+3, cursor->y+1);
@@ -146,21 +146,21 @@ void RenderCursor(Board *board, Cursor *cursor){
     // put the cursor out of the table
 }
 
-void DeRenderCursor(Board *board, Cursor *cursor){
+void DeRenderCursor(Board *board, Cursor *cursor) {
     econio_gotoxy(cursor->x*3+1, cursor->y+1);
     printf(" ");
     econio_gotoxy(cursor->x*3+3, cursor->y+1);
     printf(" ");
 }
 
-void RenderLose(Board *board, Cursor *cursor){
+void RenderLose(Board *board, Cursor *cursor) {
     char *hl = HorizontalBorder(board);
     econio_gotoxy(0, 0);
     printf("%s\n", hl);
     char v;
-    for (int j = 0; j < board->sizeY; j++){
+    for (int j = 0; j < board->sizeY; j++) {
         printf("|");
-        for (int i = 0; i < board->sizeX; i++){
+        for (int i = 0; i < board->sizeX; i++) {
             if (board->cells[i][j].isFlaged && board->cells[i][j].isBomb)
                 v = '#';
             else if (board->cells[i][j].neighbours == 0)
@@ -183,7 +183,7 @@ void RenderLose(Board *board, Cursor *cursor){
     free(hl);
 }
 
-void GameLoop(MinesweeperGame *game, Cursor *cursor){
+void GameLoop(MinesweeperGame *game, Cursor *cursor) {
     StartRendering();
     ScreenPositions sp = SetPositions(game);
     RenderTable(&game->board);
@@ -193,7 +193,7 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
     int key = 0;
     CursorDir dir = UNSET;
 
-    while (true){
+    while (true) {
         ResetAllDebugInfo(&game->dInfo);
         key = econio_getch();
         if (key == KEY_UP) dir = UP;
@@ -215,13 +215,13 @@ void GameLoop(MinesweeperGame *game, Cursor *cursor){
         printf("NotVisited = %03d\n", game->notvisited);
         printf("GameState = %d\n", game->state);
 
-        if (game->state == INGAME){
+        if (game->state == INGAME) {
             MoveCursor(&game->board, cursor, dir);
             RenderTable(&game->board);
             RenderCursor(&game->board, cursor);
             dir = UNSET;
         }
-        else if (game->state == LOSE){
+        else if (game->state == LOSE) {
             RenderLose(&game->board, cursor);
             econio_gotoxy(sp.belowTable.x, sp.belowTable.y);
             printf("Game Failed. The game exits in 3 seconds.\n");
